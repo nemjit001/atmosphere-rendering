@@ -55,13 +55,13 @@ float3 GetTransmittance(float3 pos, float3 dir)
 	float2 pixelCenter = pixel + float2(0.5, 0.5);
 	float2 uv = pixelCenter / lutSize;
 
-	float sunCosTheta = 2.0 * uv.x - 1.0;
-	float sunTheta = safeacos(sunCosTheta); // Angle between sun and horizon
+	float dirCosTheta = 2.0 * uv.x - 1.0;
+	float dirTheta = safeacos(dirCosTheta); // Angle between direction and horizon
 	float height = lerp(PlanetRadius.x, PlanetRadius.y, uv.y); // Height above surface
 
 	float3 pos = float3(0, height, 0);
-	float3 sunDir = SphericalToCarthesian(0.0, sunTheta);
-	TransmittanceLUT[pixel] = float4(GetTransmittance(pos, sunDir), 1);
+	float3 dir = SphericalToCarthesian(0.0, dirTheta);
+	TransmittanceLUT[pixel] = float4(GetTransmittance(pos, dir), 1);
 }
 
 /*
