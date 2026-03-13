@@ -1,0 +1,405 @@
+{
+    "$schema": "gigischema.json",
+    "name": "Production Ready Atmosphere Rendering",
+    "comment": "Based on a paper with the the same name by\nSebastien Hillaire.\n\nIMPORTANT:\nThis implementation does not support aerial views of\nearth-scale planets due to floating-point precision breaking down.\n\nTo get planet-scale atmosphere rendering, the planet surface\nand atmosphere radii need to be reduced.",
+    "version": "1.01",
+    "variables": [
+        {
+            "name": "RenderResolution",
+            "type": "Float2",
+            "dflt": "1280, 720",
+            "visibility": "User"
+        },
+        {
+            "name": "TransmittanceLUTResolution",
+            "type": "Float2",
+            "dflt": "256, 64",
+            "transient": true
+        },
+        {
+            "name": "SkyViewLUTResolution",
+            "type": "Float2",
+            "dflt": "200, 100",
+            "transient": true
+        },
+        {
+            "name": "PlanetRadius",
+            "comment": "Planet radii in megameters packed as (surface, atmosphere)",
+            "type": "Float2",
+            "dflt": "6.360, 6.460",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Drag",
+                "min": "0",
+                "max": "100",
+                "step": "0.001"
+            },
+            "UIGroup": "Planet Settings"
+        },
+        {
+            "name": "MieScatteringBase",
+            "type": "Float3",
+            "dflt": "3.996, 3.996, 3.996",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Drag",
+                "min": "0",
+                "max": "100",
+                "step": "0.001"
+            },
+            "UIGroup": "Atmospheric Scattering"
+        },
+        {
+            "name": "MieAbsorptionBase",
+            "type": "Float3",
+            "dflt": "4.40, 4.40, 4.40",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Drag",
+                "min": "0",
+                "max": "100",
+                "step": "0.001"
+            },
+            "UIGroup": "Atmospheric Scattering"
+        },
+        {
+            "name": "RayleighScatteringBase",
+            "type": "Float3",
+            "dflt": "5.802, 13.558, 33.1",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Drag",
+                "min": "0",
+                "max": "100",
+                "step": "0.001"
+            },
+            "UIGroup": "Atmospheric Scattering"
+        },
+        {
+            "name": "RayleighAbsorptionBase",
+            "type": "Float3",
+            "dflt": "0, 0, 0",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Drag",
+                "min": "0",
+                "max": "100",
+                "step": "0.001"
+            },
+            "UIGroup": "Atmospheric Scattering"
+        },
+        {
+            "name": "OzoneAbsorptionBase",
+            "type": "Float3",
+            "dflt": "0.650, 1.881, 0.085",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Drag",
+                "min": "0",
+                "max": "100",
+                "step": "0.001"
+            },
+            "UIGroup": "Atmospheric Scattering"
+        },
+        {
+            "name": "SunColor",
+            "type": "Float3",
+            "dflt": "1.0, 1.0, 1.0",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Color"
+            },
+            "UIGroup": "Light Settings"
+        },
+        {
+            "name": "SunDirection",
+            "type": "Float2",
+            "dflt": "0.0, 0.5",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Drag",
+                "min": "-1.0",
+                "max": "1.0",
+                "step": "0.01"
+            },
+            "UIGroup": "Light Settings"
+        },
+        {
+            "name": "SunDiskRadius",
+            "type": "Float",
+            "dflt": "0.05F",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Drag",
+                "min": "0.0",
+                "max": "1.0",
+                "step": "0.001"
+            },
+            "UIGroup": "Light Settings"
+        },
+        {
+            "name": "CameraPos",
+            "type": "Float3",
+            "dflt": "0.0f, 0.0f, 0.0f",
+            "visibility": "Host",
+            "transient": true
+        },
+        {
+            "name": "ViewMtx",
+            "type": "Float4x4",
+            "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
+            "visibility": "Host",
+            "transient": true
+        },
+        {
+            "name": "ProjMtx",
+            "type": "Float4x4",
+            "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
+            "visibility": "Host",
+            "transient": true
+        },
+        {
+            "name": "ViewProjMtx",
+            "type": "Float4x4",
+            "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
+            "visibility": "Host",
+            "transient": true
+        },
+        {
+            "name": "InvViewMtx",
+            "type": "Float4x4",
+            "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
+            "visibility": "Host",
+            "transient": true
+        },
+        {
+            "name": "InvProjMtx",
+            "type": "Float4x4",
+            "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
+            "visibility": "Host",
+            "transient": true
+        },
+        {
+            "name": "InvViewProjMtx",
+            "type": "Float4x4",
+            "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
+            "visibility": "Host",
+            "transient": true
+        }
+    ],
+    "shaders": [
+        {
+            "name": "TransmittanceLUT",
+            "fileName": "Shaders\\TransmittanceLUT.hlsl",
+            "resources": [
+                {
+                    "name": "TransmittanceLUT",
+                    "access": "UAV",
+                    "type": "Texture"
+                }
+            ]
+        },
+        {
+            "name": "SkyViewLUT",
+            "fileName": "Shaders\\SkyViewLUT.hlsl",
+            "resources": [
+                {
+                    "name": "TransmittanceLUT",
+                    "access": "SRV",
+                    "type": "Texture"
+                },
+                {
+                    "name": "SkyViewLUT",
+                    "access": "UAV",
+                    "type": "Texture"
+                }
+            ],
+            "samplers": [
+                {
+                    "name": "LinearSampler"
+                }
+            ]
+        },
+        {
+            "name": "RenderSky",
+            "fileName": "Shaders\\RenderSky.hlsl",
+            "resources": [
+                {
+                    "name": "SkyViewLUT",
+                    "access": "SRV",
+                    "type": "Texture"
+                },
+                {
+                    "name": "ColorTarget",
+                    "access": "UAV",
+                    "type": "Texture"
+                }
+            ],
+            "samplers": [
+                {
+                    "name": "LinearSampler"
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "resourceTexture": {
+                "name": "TransmittanceLUT",
+                "editorPos": [
+                    -69.0,
+                    -30.0
+                ],
+                "format": {
+                    "format": "RGBA32_Float"
+                },
+                "size": {
+                    "variable": {
+                        "name": "TransmittanceLUTResolution"
+                    }
+                }
+            }
+        },
+        {
+            "actionComputeShader": {
+                "name": "Generate Transmittance LUT",
+                "editorPos": [
+                    128.0,
+                    -32.0
+                ],
+                "linkProperties": [
+                    {}
+                ],
+                "connections": [
+                    {
+                        "srcPin": "TransmittanceLUT",
+                        "dstNode": "TransmittanceLUT",
+                        "dstPin": "resource"
+                    }
+                ],
+                "shader": {
+                    "name": "TransmittanceLUT"
+                },
+                "dispatchSize": {
+                    "node": {
+                        "name": "TransmittanceLUT"
+                    }
+                }
+            }
+        },
+        {
+            "actionComputeShader": {
+                "name": "Generate Sky View LUT",
+                "editorPos": [
+                    388.0,
+                    -30.0
+                ],
+                "linkProperties": [
+                    {},
+                    {}
+                ],
+                "connections": [
+                    {
+                        "srcPin": "TransmittanceLUT",
+                        "dstNode": "Generate Transmittance LUT",
+                        "dstPin": "TransmittanceLUT"
+                    },
+                    {
+                        "srcPin": "SkyViewLUT",
+                        "dstNode": "Sky View LUT",
+                        "dstPin": "resource"
+                    }
+                ],
+                "shader": {
+                    "name": "SkyViewLUT"
+                },
+                "dispatchSize": {
+                    "node": {
+                        "name": "Sky View LUT"
+                    }
+                }
+            }
+        },
+        {
+            "resourceTexture": {
+                "name": "Sky View LUT",
+                "editorPos": [
+                    219.0,
+                    34.0
+                ],
+                "format": {
+                    "format": "RGBA32_Float"
+                },
+                "size": {
+                    "variable": {
+                        "name": "SkyViewLUTResolution"
+                    }
+                }
+            }
+        },
+        {
+            "actionComputeShader": {
+                "name": "Render Sky",
+                "editorPos": [
+                    640.0,
+                    -32.0
+                ],
+                "linkProperties": [
+                    {},
+                    {}
+                ],
+                "connections": [
+                    {
+                        "srcPin": "SkyViewLUT",
+                        "dstNode": "Generate Sky View LUT",
+                        "dstPin": "SkyViewLUT"
+                    },
+                    {
+                        "srcPin": "ColorTarget",
+                        "dstNode": "ColorTarget",
+                        "dstPin": "resource"
+                    }
+                ],
+                "shader": {
+                    "name": "RenderSky"
+                },
+                "dispatchSize": {
+                    "node": {
+                        "name": "ColorTarget"
+                    }
+                }
+            }
+        },
+        {
+            "resourceTexture": {
+                "name": "ColorTarget",
+                "editorPos": [
+                    443.0,
+                    66.0
+                ],
+                "format": {
+                    "format": "RGBA32_Float"
+                },
+                "size": {
+                    "variable": {
+                        "name": "RenderResolution"
+                    }
+                }
+            }
+        }
+    ],
+    "settings": {
+        "common": {
+            "shaderWarningAsErrors": true
+        }
+    }
+}

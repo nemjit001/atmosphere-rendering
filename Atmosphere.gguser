@@ -1,0 +1,27 @@
+{
+    "version": "2.0",
+    "systemVars": {
+        "camera": {
+            "FOV": 60.0,
+            "startingCameraPos": [
+                0.0,
+                1.0,
+                -10.0
+            ]
+        },
+        "ProjMtx_textureName": "ColorTarget"
+    },
+    "snapshot": {
+        "resourceViewNodeIndex": 4,
+        "resourceViewResourceIndex": 3,
+        "cameraPos": [
+            0.0,
+            1.0,
+            -10.0
+        ],
+        "cameraAltitudeAzimuth": [
+            0.20187832415103913,
+            0.12789401412010194
+        ]
+    }
+}
