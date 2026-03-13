@@ -27,15 +27,13 @@ float3 GetSkyView(float3 pos, float3 dir)
 	float3 lightDir = GetSunDirection(SunDirection);
 
 	// Intersect surface and atmosphere
-	float surfaceDist = IntersectPlanet(pos, dir, PlanetRadius.x);
 	float atmoDist = IntersectPlanet(pos, dir, PlanetRadius.y);
 	if (atmoDist < 0.0) {
 		return float3(0, 0, 0);
 	}
 
 	// Raymarch sky illumination
-	float hitDist = surfaceDist >= 0.0 ? surfaceDist : atmoDist; // If we hit the surface we raymarch until surface intersection point
-	float dt = hitDist / RAYMARCH_STEPS;
+	float dt = atmoDist / RAYMARCH_STEPS;
 	float3 transmittance = float3(1, 1, 1);
 	float3 luminance = float3(0, 0, 0);
 	for (uint i = 0; i < RAYMARCH_STEPS; i++)
