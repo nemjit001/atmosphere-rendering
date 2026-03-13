@@ -16,12 +16,11 @@ float3 GetSkyViewColor(Texture2D<float4> lut, SamplerState lutSampler, float3 di
 	float2 lutDims;
 	lut.GetDimensions(lutDims.x, lutDims.y);
 
-	// Taken from https://learnopengl.com/PBR/IBL/Diffuse-irradiance
-	// and adjusted for gigi's coordinate system
-	static const float2 invAtan2 = 1.0 / float2(TWO_PI, PI);
-	float2 uv = float2(atan2(dir.x, dir.z), asin(dir.y));
-	uv *= invAtan2;
-	uv += float2(0.5, 0.5);
+	float cosTheta = clamp(dir.y, -1, 1);
+	float u = (atan2(dir.x, dir.z) / TWO_PI);
+	float v = 0.5 * cosTheta;
+
+	float2 uv = float2(u, v) + float2(0.5, 0.5);
 	return lut.SampleLevel(lutSampler, uv, 0).xyz;
 }
 
@@ -34,7 +33,7 @@ float3 GetSkyViewColor(Texture2D<float4> lut, SamplerState lutSampler, float3 di
 	float2 pixelCenter = pixel + float2(0.5, 0.5);
 	float2 uv = pixelCenter / lutSize;
 	float2 ndc = 2.0 * uv - 1.0;
-	ndc.y *= -1.0; // Flip because of DX12's texture convenetion :/
+	ndc.y *= -1.0; // Flip because of DX12's texture convenetion
 
 	// Get ray direction from ndc
 	float4 screenPos = mul(float4(ndc, 1, 1), InvViewProjMtx);

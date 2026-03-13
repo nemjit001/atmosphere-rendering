@@ -128,7 +128,7 @@
                 "UIHint": "Drag",
                 "min": "-1.0",
                 "max": "1.0",
-                "step": "0.01"
+                "step": "0.001"
             },
             "UIGroup": "Light Settings"
         },
