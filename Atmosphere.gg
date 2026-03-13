@@ -17,6 +17,12 @@
             "transient": true
         },
         {
+            "name": "MultiscatterLUTResolution",
+            "type": "Float2",
+            "dflt": "32, 32",
+            "transient": true
+        },
+        {
             "name": "SkyViewLUTResolution",
             "type": "Float2",
             "dflt": "200, 100",
@@ -209,6 +215,27 @@
             ]
         },
         {
+            "name": "MultiscatterLUT",
+            "fileName": "Shaders\\MultiscatterLUT.hlsl",
+            "resources": [
+                {
+                    "name": "TransmittanceLUT",
+                    "access": "SRV",
+                    "type": "Texture"
+                },
+                {
+                    "name": "MultiscatterLUT",
+                    "access": "UAV",
+                    "type": "Texture"
+                }
+            ],
+            "samplers": [
+                {
+                    "name": "LinearSampler"
+                }
+            ]
+        },
+        {
             "name": "SkyViewLUT",
             "fileName": "Shaders\\SkyViewLUT.hlsl",
             "resources": [
@@ -300,7 +327,7 @@
             "actionComputeShader": {
                 "name": "Generate Sky View LUT",
                 "editorPos": [
-                    388.0,
+                    676.0,
                     -30.0
                 ],
                 "linkProperties": [
@@ -310,7 +337,7 @@
                 "connections": [
                     {
                         "srcPin": "TransmittanceLUT",
-                        "dstNode": "Generate Transmittance LUT",
+                        "dstNode": "Generate Multiple Scattering LUT",
                         "dstPin": "TransmittanceLUT"
                     },
                     {
@@ -333,8 +360,8 @@
             "resourceTexture": {
                 "name": "Sky View LUT",
                 "editorPos": [
-                    219.0,
-                    34.0
+                    504.0,
+                    66.0
                 ],
                 "format": {
                     "format": "RGBA32_Float"
@@ -350,7 +377,7 @@
             "actionComputeShader": {
                 "name": "Render Sky",
                 "editorPos": [
-                    640.0,
+                    928.0,
                     -32.0
                 ],
                 "linkProperties": [
@@ -383,7 +410,7 @@
             "resourceTexture": {
                 "name": "ColorTarget",
                 "editorPos": [
-                    443.0,
+                    731.0,
                     66.0
                 ],
                 "format": {
@@ -395,11 +422,64 @@
                     }
                 }
             }
+        },
+        {
+            "actionComputeShader": {
+                "name": "Generate Multiple Scattering LUT",
+                "editorPos": [
+                    378.0,
+                    -33.0
+                ],
+                "linkProperties": [
+                    {},
+                    {}
+                ],
+                "connections": [
+                    {
+                        "srcPin": "TransmittanceLUT",
+                        "dstNode": "Generate Transmittance LUT",
+                        "dstPin": "TransmittanceLUT"
+                    },
+                    {
+                        "srcPin": "MultiscatterLUT",
+                        "dstNode": "MultiscatterLUT",
+                        "dstPin": "resource"
+                    }
+                ],
+                "shader": {
+                    "name": "MultiscatterLUT"
+                },
+                "dispatchSize": {
+                    "node": {
+                        "name": "MultiscatterLUT"
+                    }
+                }
+            }
+        },
+        {
+            "resourceTexture": {
+                "name": "MultiscatterLUT",
+                "editorPos": [
+                    219.0,
+                    34.0
+                ],
+                "format": {
+                    "format": "RGBA32_Float"
+                },
+                "size": {
+                    "variable": {
+                        "name": "MultiscatterLUTResolution"
+                    }
+                }
+            }
         }
     ],
     "settings": {
         "common": {
             "shaderWarningAsErrors": true
         }
+    },
+    "PrimaryOutput": {
+        "name": "ColorTarget"
     }
 }
