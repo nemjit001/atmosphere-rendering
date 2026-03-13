@@ -11,8 +11,10 @@ static float3 SunColor = /*$(Variable:SunColor)*/;
 static float SunIntensity = /*$(Variable:SunIntensity)*/;
 static float SunDiskRadius = /*$(Variable:SunDiskRadius)*/;
 
-// Get the sky view color from the sky view LUT.
-float3 GetSkyViewColor(Texture2D<float4> lut, SamplerState lutSampler, float3 dir)
+static float2 PlanetRadius = /*$(Variable:PlanetRadius)*/;
+
+// Get the sky view luminance from the sky view LUT.
+float3 GetSkyViewLuminance(Texture2D<float4> lut, SamplerState lutSampler, float3 dir)
 {
 	float2 lutDims;
 	lut.GetDimensions(lutDims.x, lutDims.y);
@@ -41,22 +43,28 @@ float3 GetSkyViewColor(Texture2D<float4> lut, SamplerState lutSampler, float3 di
 	screenPos.xyz /= screenPos.w;
 
 	// Get sky color from LUT
-	float3 rayDir = normalize(screenPos.xyz - CameraPos);
-	float3 skyColor = GetSkyViewColor(SkyViewLUT, LinearSampler, rayDir);
+	float3 viewDir = normalize(screenPos.xyz - CameraPos);
+	float3 skyLuminance = GetSkyViewLuminance(SkyViewLUT, LinearSampler, viewDir);
 
-	// Composite sun disk on top of sky
+	// Get sun disk parameters & calculate sun luminance
 	float3 sunDir = GetSunDirection(SunDirection);
 	float diskRadius = SunDiskRadius * 1e-3; // Adjust disk radius to be even smaller, otherwise UI doesn't display right :/
-	float3 sunDiskIntensity = smoothstep(1.0 - diskRadius, 1.0, dot(rayDir, sunDir));
+	float3 sunDiskIntensity = smoothstep(1.0 - diskRadius, 1.0, dot(viewDir, sunDir));
 	sunDiskIntensity = sunDir.y <= 0.0 ? float3(0, 0, 0) : sunDiskIntensity; // Handle case when sun is below horizon line
-	skyColor += sunDiskIntensity * SunColor * SunIntensity;
+
+	float3 viewPos = float3(0, PlanetRadius.x, 0) + CameraPos * 1e-6; // Adds camera position in mega meters to planet surface height
+	float relSurfaceHeight = (length(viewPos) - PlanetRadius.x) / (PlanetRadius.y - PlanetRadius.x);
+	float3 sunTransmittance = GetAtmosphericTransmittance(TransmittanceLUT, LinearSampler, relSurfaceHeight, viewPos, sunDir);
+	float3 sunLuminance = sunDiskIntensity * SunColor * SunIntensity * sunTransmittance;
 
 	// All done :)
-	ColorTarget[pixel] = float4(skyColor, 1);
+	float3 luminance = skyLuminance + sunLuminance;
+	ColorTarget[pixel] = float4(luminance, 1);
 }
 
 /*
 Shader Resources:
+	Texture TransmittanceLUT (as SRV)
 	Texture SkyViewLUT (as SRV)
 	Texture ColorTarget (as UAV)
 	Sampler LinearSampler (as SamplerState)

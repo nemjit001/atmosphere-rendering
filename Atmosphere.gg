@@ -297,6 +297,11 @@
             "fileName": "Shaders\\RenderSky.hlsl",
             "resources": [
                 {
+                    "name": "TransmittanceLUT",
+                    "access": "SRV",
+                    "type": "Texture"
+                },
+                {
                     "name": "SkyViewLUT",
                     "access": "SRV",
                     "type": "Texture"
@@ -425,9 +430,15 @@
                 ],
                 "linkProperties": [
                     {},
+                    {},
                     {}
                 ],
                 "connections": [
+                    {
+                        "srcPin": "TransmittanceLUT",
+                        "dstNode": "Generate Sky View LUT",
+                        "dstPin": "TransmittanceLUT"
+                    },
                     {
                         "srcPin": "SkyViewLUT",
                         "dstNode": "Generate Sky View LUT",
