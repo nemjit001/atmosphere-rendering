@@ -15,13 +15,9 @@
         "resourceViewNodeIndex": 4,
         "resourceViewResourceIndex": 4,
         "cameraPos": [
-            -0.0012070582015439869,
-            -0.0952773168683052,
-            -10.083568572998047
-        ],
-        "cameraAltitudeAzimuth": [
-            0.09209051728248596,
-            6.268738746643066
+            0.0,
+            1.0,
+            -10.0
         ]
     }
 }

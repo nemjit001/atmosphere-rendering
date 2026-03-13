@@ -26,7 +26,7 @@ float3 GetSkyView(float3 pos, float3 dir)
 	// Calculate sun direction
 	float3 lightDir = GetSunDirection(SunDirection);
 
-	// Intersect surface and atmosphere
+	// Intersect atmosphere
 	float atmoDist = IntersectPlanet(pos, dir, PlanetRadius.y);
 	if (atmoDist < 0.0) {
 		return float3(0, 0, 0);
@@ -79,12 +79,12 @@ float3 GetSkyView(float3 pos, float3 dir)
 	float2 uv = pixelCenter / lutSize;
 
 	// Convert uv coords to a view direction in the lat/long texture
-	// TODO(nemjit001): Apply nonlinear latitude transformation for packing more detail near horizon
 	float phi = (2.0 * uv.x - 1.0) * PI;
 	float theta = safeacos(2.0 * uv.y - 1.0);
-	float3 viewDir = SphericalToCarthesian(phi, theta);
 
+	// TODO(nemjit001): Apply nonlinear transformation for u/v coords
 	float3 viewPos = float3(0, PlanetRadius.x, 0) + CameraPos * 1e-6; // Adds camera position in mega meters to planet surface height
+	float3 viewDir = SphericalToCarthesian(phi, theta);
 	SkyViewLUT[pixel] = float4(GetSkyView(viewPos, viewDir), 1);
 }
 
