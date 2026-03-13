@@ -51,13 +51,16 @@ float3 GetSkyView(float3 pos, float3 dir)
 		float3 ozoneAbsorption = OzoneAbsorptionBase;
 		float3 extinction = GetScatteringCoefficients(surfaceHeight, mieScattering, mieAbsorption, rayleighScattering, rayleighAbsorption, ozoneAbsorption);
 
-		// Calculate transmittance for light through volume
+		// Calculate transmittance of light through volume
 		float lightCosTheta = dot(dir, lightDir);
-		float3 scattering = MiePhase(lightCosTheta) * mieScattering + RayleighPhase(lightCosTheta) * rayleighScattering;
-		float3 sunTransmittance = GetAtmosphericTransmittance(TransmittanceLUT, LinearSampler, relativeHeight, samplePos, lightDir);
+		float3 lightTransmittance = GetAtmosphericTransmittance(TransmittanceLUT, LinearSampler, relativeHeight, samplePos, lightDir);
 
+		// Premuliplied phase function modulated scattering, simplifies luminance calculation
+		float3 phase = MiePhase(lightCosTheta) * mieScattering + RayleighPhase(lightCosTheta) * rayleighScattering;
+
+		// Apply new transmittance and luminance :)
 		transmittance *= exp(-dt * extinction);
-		luminance += SunColor * sunTransmittance * scattering * transmittance * dt;
+		luminance += phase * transmittance * lightTransmittance * SunColor * dt;
 	}
 
 	return luminance;

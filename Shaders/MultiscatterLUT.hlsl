@@ -21,6 +21,10 @@ float3 GetIncomingLuminance(float3 pos, float3 dir, out float3 luminanceFactor)
 	// TODO(nemjit001): Integrate unitless luminance for direction and accumulate luminance factor at the same time
 	float3 luminance = float3(0, 0, 0);
 	luminanceFactor = float3(0, 0, 0);
+	for (uint i = 0; i < RAYMARCH_STEPS; i++)
+	{
+		//
+	}
 
 	return luminance;
 }
