@@ -44,6 +44,21 @@
             "UIGroup": "Planet Settings"
         },
         {
+            "name": "GroundAlbedo",
+            "comment": "Average ground reflectivity.",
+            "type": "Float3",
+            "dflt": "0.3, 0.3, 0.3",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Color",
+                "min": "0",
+                "max": "1",
+                "step": "0.01"
+            },
+            "UIGroup": "Planet Settings"
+        },
+        {
             "name": "MieScatteringBase",
             "type": "Float3",
             "dflt": "3.996, 3.996, 3.996",
@@ -114,6 +129,20 @@
             "UIGroup": "Atmospheric Scattering"
         },
         {
+            "name": "SunDirection",
+            "type": "Float2",
+            "dflt": "0.0, 0.5",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Drag",
+                "min": "-1.0",
+                "max": "1.0",
+                "step": "0.001"
+            },
+            "UIGroup": "Light Settings"
+        },
+        {
             "name": "SunColor",
             "type": "Float3",
             "dflt": "1.0, 1.0, 1.0",
@@ -125,16 +154,16 @@
             "UIGroup": "Light Settings"
         },
         {
-            "name": "SunDirection",
-            "type": "Float2",
-            "dflt": "0.0, 0.5",
+            "name": "SunIntensity",
+            "type": "Float",
+            "dflt": "5",
             "visibility": "User",
             "transient": true,
             "UISettings": {
                 "UIHint": "Drag",
-                "min": "-1.0",
-                "max": "1.0",
-                "step": "0.001"
+                "min": "0",
+                "max": "10",
+                "step": "0.01"
             },
             "UIGroup": "Light Settings"
         },
@@ -231,7 +260,8 @@
             ],
             "samplers": [
                 {
-                    "name": "LinearSampler"
+                    "name": "LinearSampler",
+                    "addressMode": "Clamp"
                 }
             ]
         },
@@ -245,6 +275,11 @@
                     "type": "Texture"
                 },
                 {
+                    "name": "MultiscatterLUT",
+                    "access": "SRV",
+                    "type": "Texture"
+                },
+                {
                     "name": "SkyViewLUT",
                     "access": "UAV",
                     "type": "Texture"
@@ -252,7 +287,8 @@
             ],
             "samplers": [
                 {
-                    "name": "LinearSampler"
+                    "name": "LinearSampler",
+                    "addressMode": "Clamp"
                 }
             ]
         },
@@ -273,7 +309,8 @@
             ],
             "samplers": [
                 {
-                    "name": "LinearSampler"
+                    "name": "LinearSampler",
+                    "addressMode": "Clamp"
                 }
             ]
         }
@@ -332,6 +369,7 @@
                 ],
                 "linkProperties": [
                     {},
+                    {},
                     {}
                 ],
                 "connections": [
@@ -339,6 +377,11 @@
                         "srcPin": "TransmittanceLUT",
                         "dstNode": "Generate Multiple Scattering LUT",
                         "dstPin": "TransmittanceLUT"
+                    },
+                    {
+                        "srcPin": "MultiscatterLUT",
+                        "dstNode": "Generate Multiple Scattering LUT",
+                        "dstPin": "MultiscatterLUT"
                     },
                     {
                         "srcPin": "SkyViewLUT",
@@ -427,8 +470,8 @@
             "actionComputeShader": {
                 "name": "Generate Multiple Scattering LUT",
                 "editorPos": [
-                    378.0,
-                    -33.0
+                    389.0,
+                    -30.0
                 ],
                 "linkProperties": [
                     {},

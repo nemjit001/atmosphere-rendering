@@ -6,8 +6,9 @@
 static float3 CameraPos = /*$(Variable:CameraPos)*/;
 static float4x4 InvViewProjMtx = /*$(Variable:InvViewProjMtx)*/;
 
-static float3 SunColor = /*$(Variable:SunColor)*/;
 static float2 SunDirection = /*$(Variable:SunDirection)*/;
+static float3 SunColor = /*$(Variable:SunColor)*/;
+static float SunIntensity = /*$(Variable:SunIntensity)*/;
 static float SunDiskRadius = /*$(Variable:SunDiskRadius)*/;
 
 // Get the sky view color from the sky view LUT.
@@ -48,7 +49,7 @@ float3 GetSkyViewColor(Texture2D<float4> lut, SamplerState lutSampler, float3 di
 	float diskRadius = SunDiskRadius * 1e-3; // Adjust disk radius to be even smaller, otherwise UI doesn't display right :/
 	float3 sunDiskIntensity = smoothstep(1.0 - diskRadius, 1.0, dot(rayDir, sunDir));
 	sunDiskIntensity = sunDir.y <= 0.0 ? float3(0, 0, 0) : sunDiskIntensity; // Handle case when sun is below horizon line
-	skyColor += sunDiskIntensity * SunColor;
+	skyColor += sunDiskIntensity * SunColor * SunIntensity;
 
 	// All done :)
 	ColorTarget[pixel] = float4(skyColor, 1);

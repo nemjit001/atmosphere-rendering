@@ -7,10 +7,12 @@
 
 static float3 CameraPos = /*$(Variable:CameraPos)*/;
 
-static float3 SunColor = /*$(Variable:SunColor)*/;
 static float2 SunDirection = /*$(Variable:SunDirection)*/;
+static float3 SunColor = /*$(Variable:SunColor)*/;
+static float SunIntensity = /*$(Variable:SunIntensity)*/;
 
 static float2 PlanetRadius = /*$(Variable:PlanetRadius)*/;
+static float3 GroundAlbedo = /*$(Variable:GroundAlbedo)*/;
 
 static float3 MieScatteringBase = /*$(Variable:MieScatteringBase)*/;
 static float3 MieAbsorptionBase = /*$(Variable:MieAbsorptionBase)*/;
@@ -32,10 +34,10 @@ float3 GetSkyView(float3 pos, float3 dir)
 	}
 
 	// Raymarch sky illumination
-	float hitDist = surfaceDist > 0.0 ? surfaceDist : atmoDist; // If we hit the surface we raymarch until surface intersection point
+	float hitDist = surfaceDist >= 0.0 ? surfaceDist : atmoDist; // If we hit the surface we raymarch until surface intersection point
 	float dt = hitDist / RAYMARCH_STEPS;
-	float3 luminance = float3(0, 0, 0);
 	float3 transmittance = float3(1, 1, 1);
+	float3 luminance = float3(0, 0, 0);
 	for (uint i = 0; i < RAYMARCH_STEPS; i++)
 	{
 		// Calculate sample position and surface height
@@ -55,12 +57,15 @@ float3 GetSkyView(float3 pos, float3 dir)
 		float lightCosTheta = dot(dir, lightDir);
 		float3 lightTransmittance = GetAtmosphericTransmittance(TransmittanceLUT, LinearSampler, relativeHeight, samplePos, lightDir);
 
+		// Get multiple scattering energy factor
+		float3 psi = GetAtmosphericTransmittance(MultiscatterLUT, LinearSampler, relativeHeight, samplePos, lightDir);
+
 		// Premuliplied phase function modulated scattering, simplifies luminance calculation
 		float3 phase = MiePhase(lightCosTheta) * mieScattering + RayleighPhase(lightCosTheta) * rayleighScattering;
 
-		// Apply new transmittance and luminance :)
+		// Apply new transmittance and luminance
 		transmittance *= exp(-dt * extinction);
-		luminance += phase * transmittance * lightTransmittance * SunColor * dt;
+		luminance += (phase * transmittance * lightTransmittance + psi) * SunColor * SunIntensity * dt;
 	}
 
 	return luminance;
@@ -88,6 +93,7 @@ float3 GetSkyView(float3 pos, float3 dir)
 /*
 Shader Resources:
 	Texture TransmittanceLUT (as SRV)
+	Texture MultiscatterLUT (as SRV)
 	Texture SkyViewLUT (as UAV)
 	Sampler LinearSampler (as SamplerState)
 */

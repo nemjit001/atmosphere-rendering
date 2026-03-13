@@ -89,7 +89,7 @@ float HenyeyGreensteinPhase(float cosTheta, float g)
 {
 	float g2 = g * g;
 	float denom = (1.0 + g2 - (2.0 * g) * cosTheta);
-	return (1.0 / 4.0 * PI) * ((1 - g2) / pow(denom, 1.5));
+	return (1.0 / (4.0 * PI)) * ((1 - g2) / pow(denom, 1.5));
 }
 
 // Mie scattering phase function (HG phase with g=0.8).
@@ -102,6 +102,12 @@ float MiePhase(float cosTheta)
 float RayleighPhase(float cosTheta)
 {
 	return (3.0 * (1.0 + (cosTheta * cosTheta))) / (16.0 * PI);
+}
+
+// Isotropic scattering phase function.
+float IsotropicPhase(float cosTheta)
+{
+	return 1.0 / (4.0 * PI);
 }
 
 // Get the atmospheric transmittance from a LUT.
