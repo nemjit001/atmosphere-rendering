@@ -78,11 +78,16 @@ float3 GetSkyView(float3 pos, float3 dir)
 	float2 pixelCenter = pixel + float2(0.5, 0.5);
 	float2 uv = pixelCenter / lutSize;
 
-	// Convert uv coords to a view direction in the lat/long texture
-	float phi = (2.0 * uv.x - 1.0) * PI;
-	float theta = safeacos(2.0 * uv.y - 1.0);
+	// Theta based on nonlinear mapping of v, ranged in [0, PI] using a quadratic curve centered around 1/2 PI.
+	float v = 2.0 * uv.y - 1.0;
+	v = sign(v) * (v * v);
+	float theta = -v * (0.5 * PI);
+	theta += (0.5 * PI);
 
-	// TODO(nemjit001): Apply nonlinear transformation for u/v coords
+	// Phi ranged in [-PI, PI]
+	float phi = (2.0 * uv.x - 1.0) * PI;
+
+	// Generate sky view
 	float3 viewPos = float3(0, PlanetRadius.x, 0) + CameraPos * 1e-6; // Adds camera position in mega meters to planet surface height
 	float3 viewDir = SphericalToCarthesian(phi, theta);
 	SkyViewLUT[pixel] = float4(GetSkyView(viewPos, viewDir), 1);

@@ -1,8 +1,8 @@
 #ifndef COMMON_HLSL
 #define COMMON_HLSL
 
-#define PI      3.14159265
-#define TWO_PI  6.28318531
+#define PI      3.14159265358979
+#define TWO_PI  6.28318530717959
 
 // Clamped acos function to ensure that invalid values get clamped
 float safeacos(float x)

@@ -20,10 +20,10 @@ float3 GetSkyViewLuminance(Texture2D<float4> lut, SamplerState lutSampler, float
 	lut.GetDimensions(lutDims.x, lutDims.y);
 
 	// Calculate uv coords
+	float theta = safeacos(-dir.y) - (0.5 * PI);
 	float u = 0.5 + (atan2(dir.x, dir.z) / TWO_PI);
-	float v = 0.5 + 0.5 * clamp(dir.y, -1, 1);
+	float v = 0.5 + 0.5 * sign(theta) * sqrt(abs(theta) / (0.5 * PI));
 
-	// TODO(nemjit001): Apply nonlinear transformation for u/v coords
 	float2 uv = float2(u, v);
 	return lut.SampleLevel(lutSampler, uv, 0).xyz;
 }
