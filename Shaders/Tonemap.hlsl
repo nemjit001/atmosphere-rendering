@@ -9,7 +9,7 @@ float luminance(float3 color)
 	return dot(color, float3(0.2126, 0.7152, 0.0722));
 }
 
-// Approximated ACES filmic tonemapping taken from
+// Approximated ACES filmic tonemapping approximation taken from
 // https://64.github.io/tonemapping/#aces
 // referencing
 // https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/

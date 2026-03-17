@@ -9,6 +9,7 @@ This Gigi render technique implements the entire pipeline described in "A Scalab
 - Multiple Scattering LUT
 - Sky View LUT
 - Aerial Perspective LUT
+- ACES filmic tonemapper
 
 The Gigi technique exposes the Aerial Perspective LUT and color target containing the rendered sky.
 These can be used by other techniques to shade geometry using atmospheric scattering.
