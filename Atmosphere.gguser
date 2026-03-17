@@ -1,5 +1,6 @@
 {
     "version": "2.0",
+    "syncInterval": 0,
     "systemVars": {
         "camera": {
             "FOV": 70.0,
@@ -12,12 +13,12 @@
         "ProjMtx_textureName": "ColorTarget"
     },
     "snapshot": {
-        "resourceViewNodeIndex": 10,
-        "resourceViewResourceIndex": 4,
+        "resourceViewNodeIndex": 8,
+        "resourceViewResourceIndex": 3,
         "cameraPos": [
             0.0,
             1.0,
-            -10.047146797180176
+            -10.047362327575684
         ]
     }
 }

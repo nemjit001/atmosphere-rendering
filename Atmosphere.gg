@@ -709,9 +709,7 @@
                     66.0
                 ],
                 "format": {
-                    "node": {
-                        "name": "ColorTarget"
-                    }
+                    "format": "RGBA8_Unorm_sRGB"
                 },
                 "size": {
                     "node": {
