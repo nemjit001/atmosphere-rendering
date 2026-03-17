@@ -35,15 +35,41 @@ float4 GetAerialPerspective(float3 pos, float3 dir)
 
 	// Raymarch aerial perspective
 	float dt = atmoDist / RAYMARCH_STEPS;
-	float3 luminance = float3(0, 0, 0);
 	float3 transmittance = float3(1, 1, 1);
+	float3 luminance = float3(0, 0, 0);
 	for (uint i = 0; i < RAYMARCH_STEPS; i++)
 	{
-		// TODO(nemjit001): Raymarch luminance and transmittance using LUTs and scattering coeffs
+		// Calculate sample position and surface height
+		float3 samplePos = pos + dir * i * dt;
+		float surfaceHeight = max(0, length(samplePos) - PlanetRadius.x);
+		float relativeHeight = surfaceHeight / (PlanetRadius.y - PlanetRadius.x);
+
+		// Calculate scattering coefficients based on height density profile
+		float3 mieScattering = MieScatteringBase;
+		float3 mieAbsorption = MieAbsorptionBase;
+		float3 rayleighScattering = RayleighScatteringBase;
+		float3 rayleighAbsorption = RayleighAbsorptionBase;
+		float3 ozoneAbsorption = OzoneAbsorptionBase;
+		float3 extinction = GetScatteringCoefficients(surfaceHeight, mieScattering, mieAbsorption, rayleighScattering, rayleighAbsorption, ozoneAbsorption);
+
+		// Calculate transmittance of light through volume
+		float lightCosTheta = dot(dir, lightDir);
+		float3 lightTransmittance = GetAtmosphericTransmittance(TransmittanceLUT, LinearSampler, relativeHeight, samplePos, lightDir);
+
+		// Get multiple scattering energy factor
+		float3 psi = GetAtmosphericTransmittance(MultiscatterLUT, LinearSampler, relativeHeight, samplePos, lightDir);
+
+		// Premuliplied phase function modulated scattering, simplifies luminance calculation
+		float3 phase = MiePhase(lightCosTheta) * mieScattering + RayleighPhase(lightCosTheta) * rayleighScattering;
+
+		// Apply new transmittance and luminance
+		transmittance *= exp(-dt * extinction);
+		luminance += (phase * transmittance * lightTransmittance + psi) * SunColor * SunIntensity * dt;
 	}
 
-	float meanTransmittance = (transmittance.x + transmittance.y + transmittance.z) / 3.0;
-	return float4(luminance, meanTransmittance);
+	// Average transmittance into single alpha value for LUT
+	float transmittanceAlpha = (transmittance.x + transmittance.y + transmittance.z) / 3.0;
+	return float4(luminance, transmittanceAlpha);
 }
 
 /*$(_compute:main)*/(uint3 DTid : SV_DispatchThreadID)
@@ -68,7 +94,7 @@ float4 GetAerialPerspective(float3 pos, float3 dir)
 	// Calculate froxel world-space position in megameters based on camera position
 	float froxelDist = uvw.z * AerialPerspectiveDepth * 1000.0; // Froxel distance from camera in meters
 	float3 froxelPos = CameraPos + froxelDist * viewDir; // Froxel position in meters
-	froxelPos *= 1e-6; // Froxel position in megameters
+	froxelPos = float3(0, PlanetRadius.x, 0) + froxelPos * 1e-6; // Froxel position in megameters on planet surface
 
 	// Get aerial perspective LUT value based on froxel position and view direction
 	AerialPerspectiveLUT[froxelIdx] = GetAerialPerspective(froxelPos, viewDir);
