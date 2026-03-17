@@ -389,7 +389,12 @@
             "fileName": "Shaders\\Tonemap.hlsl",
             "resources": [
                 {
-                    "name": "ColorTarget",
+                    "name": "Input",
+                    "access": "SRV",
+                    "type": "Texture"
+                },
+                {
+                    "name": "Output",
                     "access": "UAV",
                     "type": "Texture"
                 }
@@ -612,13 +617,19 @@
                     -32.0
                 ],
                 "linkProperties": [
+                    {},
                     {}
                 ],
                 "connections": [
                     {
-                        "srcPin": "ColorTarget",
+                        "srcPin": "Input",
                         "dstNode": "Render Sky",
                         "dstPin": "ColorTarget"
+                    },
+                    {
+                        "srcPin": "Output",
+                        "dstNode": "SkyboxPreviewTarget",
+                        "dstPin": "resource"
                     }
                 ],
                 "shader": {
@@ -686,6 +697,25 @@
                 "dispatchSize": {
                     "node": {
                         "name": "AerialPerspectiveLUT"
+                    }
+                }
+            }
+        },
+        {
+            "resourceTexture": {
+                "name": "SkyboxPreviewTarget",
+                "editorPos": [
+                    940.0,
+                    66.0
+                ],
+                "format": {
+                    "node": {
+                        "name": "ColorTarget"
+                    }
+                },
+                "size": {
+                    "node": {
+                        "name": "ColorTarget"
                     }
                 }
             }

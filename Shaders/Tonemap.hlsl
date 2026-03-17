@@ -27,13 +27,14 @@ float3 ACESTonemap(float3 color)
 /*$(_compute:main)*/(uint3 DTid : SV_DispatchThreadID)
 {
 	uint2 pixel = DTid.xy;
-	float4 sourceColor = ColorTarget[pixel];
+	float4 sourceColor = Input[pixel];
 
 	float3 result = pow(ACESTonemap(sourceColor.xyz), 1.0 / Gamma);
-	ColorTarget[pixel] = float4(result, sourceColor.a);
+	Output[pixel] = float4(result, sourceColor.a);
 }
 
 /*
 Shader Resources:
-	Texture ColorTarget (as UAV)
+	Texture Input (as SRV)
+	Texture Output (as UAV)
 */

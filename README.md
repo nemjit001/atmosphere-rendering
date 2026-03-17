@@ -11,8 +11,10 @@ This Gigi render technique implements the entire pipeline described in "A Scalab
 - Aerial perspective LUT for camera frustum, without visibility term.
 - ACES filmic tonemapping of output color target.
 
-The Gigi technique exposes the Aerial Perspective LUT and color target containing the rendered sky.
+The Gigi technique exposes the Aerial Perspective LUT and a color target containing the rendered sky.
 These can be used by other techniques to shade geometry using atmospheric scattering.
+
+A tonemapped version of the color target is also provided to preview the skybox output.
 
 IMPORTANT:
 
