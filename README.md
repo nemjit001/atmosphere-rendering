@@ -1,5 +1,7 @@
 # Production Ready Atmosphere Rendering
 
+![Example Render](./Render.png)
+
 An atmospheric scattering implementation based on a paper with the the same name, written by Sébastien Hillaire.
 
 This Gigi render technique implements the entire pipeline described in "A Scalable and Production Ready Sky and Atmosphere Rendering Technique":
