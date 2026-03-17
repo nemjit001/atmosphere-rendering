@@ -231,8 +231,8 @@
             "transient": true
         },
         {
-            "name": "Exposure",
-            "comment": "Camera exposure",
+            "name": "Gamma",
+            "comment": "Camera Gamma value",
             "type": "Float",
             "dflt": "2.2",
             "visibility": "User",

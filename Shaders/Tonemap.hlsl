@@ -1,8 +1,7 @@
 // Production Ready Atmosphere Rendering technique, shader Tonemap
 /*$(ShaderResources)*/
 
-static const float Exposure = /*$(Variable:Exposure)*/;
-static const float3 WhitePoint = float3(1, 1, 1);
+static const float Gamma = /*$(Variable:Gamma)*/;
 
 // Convert a color to luminance values.
 float luminance(float3 color)
@@ -10,13 +9,19 @@ float luminance(float3 color)
 	return dot(color, float3(0.2126, 0.7152, 0.0722));
 }
 
-// Perform Reinhard-Extended tonemapping.
-float3 ReinhardTonemap(float3 color)
+// Approximated ACES filmic tonemapping taken from
+// https://64.github.io/tonemapping/#aces
+// referencing
+// https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/
+float3 ACESTonemap(float3 color)
 {
-	float whitePointL = luminance(WhitePoint);
-	float inL = luminance(color);
-	float outL = (inL * (1.0 + (inL / (whitePointL * whitePointL)))) / (1.0 + inL);
-	return color * (outL / inL);
+	color *= 0.6;
+    float a = 2.51;
+    float b = 0.03;
+    float c = 2.43;
+    float d = 0.59;
+    float e = 0.14;
+    return clamp((color * (a * color + b)) / (color * (c * color + d) + e), 0, 1);
 }
 
 /*$(_compute:main)*/(uint3 DTid : SV_DispatchThreadID)
@@ -24,7 +29,7 @@ float3 ReinhardTonemap(float3 color)
 	uint2 pixel = DTid.xy;
 	float4 sourceColor = ColorTarget[pixel];
 
-	float3 result = pow(ReinhardTonemap(sourceColor.xyz), 1.0 / Exposure);
+	float3 result = pow(ACESTonemap(sourceColor.xyz), 1.0 / Gamma);
 	ColorTarget[pixel] = float4(result, sourceColor.a);
 }
 
