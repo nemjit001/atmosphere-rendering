@@ -229,6 +229,20 @@
             "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
             "visibility": "Host",
             "transient": true
+        },
+        {
+            "name": "Exposure",
+            "comment": "Camera exposure",
+            "type": "Float",
+            "dflt": "2.2",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Drag",
+                "min": "0",
+                "max": "10",
+                "step": "0.01"
+            }
         }
     ],
     "shaders": [
@@ -316,6 +330,17 @@
                 {
                     "name": "LinearSampler",
                     "addressMode": "Clamp"
+                }
+            ]
+        },
+        {
+            "name": "Tonemap",
+            "fileName": "Shaders\\Tonemap.hlsl",
+            "resources": [
+                {
+                    "name": "ColorTarget",
+                    "access": "UAV",
+                    "type": "Texture"
                 }
             ]
         }
@@ -523,6 +548,33 @@
                 "size": {
                     "variable": {
                         "name": "MultiscatterLUTResolution"
+                    }
+                }
+            }
+        },
+        {
+            "actionComputeShader": {
+                "name": "Tonemap",
+                "editorPos": [
+                    1152.0,
+                    -32.0
+                ],
+                "linkProperties": [
+                    {}
+                ],
+                "connections": [
+                    {
+                        "srcPin": "ColorTarget",
+                        "dstNode": "Render Sky",
+                        "dstPin": "ColorTarget"
+                    }
+                ],
+                "shader": {
+                    "name": "Tonemap"
+                },
+                "dispatchSize": {
+                    "node": {
+                        "name": "ColorTarget"
                     }
                 }
             }
