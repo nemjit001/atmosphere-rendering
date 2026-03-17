@@ -188,6 +188,35 @@
             "UIGroup": "Light Settings"
         },
         {
+            "name": "AerialPerspectiveDepth",
+            "comment": "Depth of the furthest aerial perspective froxel in kilometers from the camera.",
+            "type": "Float",
+            "dflt": "32",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Drag",
+                "min": "0",
+                "max": "100",
+                "step": "0.01"
+            },
+            "UIGroup": "Aerial Perspective Settings"
+        },
+        {
+            "name": "Gamma",
+            "comment": "Camera Gamma value",
+            "type": "Float",
+            "dflt": "2.2",
+            "visibility": "User",
+            "transient": true,
+            "UISettings": {
+                "UIHint": "Drag",
+                "min": "0",
+                "max": "10",
+                "step": "0.01"
+            }
+        },
+        {
             "name": "CameraPos",
             "type": "Float3",
             "dflt": "0.0f, 0.0f, 0.0f",
@@ -235,20 +264,6 @@
             "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
             "visibility": "Host",
             "transient": true
-        },
-        {
-            "name": "Gamma",
-            "comment": "Camera Gamma value",
-            "type": "Float",
-            "dflt": "2.2",
-            "visibility": "User",
-            "transient": true,
-            "UISettings": {
-                "UIHint": "Drag",
-                "min": "0",
-                "max": "10",
-                "step": "0.01"
-            }
         }
     ],
     "shaders": [
@@ -619,6 +634,7 @@
         {
             "resourceTexture": {
                 "name": "AerialPerspectiveLUT",
+                "comment": "This LUT contains inscattering in the RGB channels and average transmittance in the Alpha channel.",
                 "editorPos": [
                     729.0,
                     194.0

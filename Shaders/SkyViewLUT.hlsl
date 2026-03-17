@@ -12,7 +12,6 @@ static float3 SunColor = /*$(Variable:SunColor)*/;
 static float SunIntensity = /*$(Variable:SunIntensity)*/;
 
 static float2 PlanetRadius = /*$(Variable:PlanetRadius)*/;
-static float3 GroundAlbedo = /*$(Variable:GroundAlbedo)*/;
 
 static float3 MieScatteringBase = /*$(Variable:MieScatteringBase)*/;
 static float3 MieAbsorptionBase = /*$(Variable:MieAbsorptionBase)*/;

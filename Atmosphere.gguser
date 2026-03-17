@@ -12,12 +12,12 @@
         "ProjMtx_textureName": "ColorTarget"
     },
     "snapshot": {
-        "resourceViewNodeIndex": 8,
-        "resourceViewResourceIndex": 2,
+        "resourceViewNodeIndex": 10,
+        "resourceViewResourceIndex": 4,
         "cameraPos": [
             0.0,
             1.0,
-            -10.050950050354004
+            -10.0
         ]
     }
 }

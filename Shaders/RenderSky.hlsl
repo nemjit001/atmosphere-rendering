@@ -42,9 +42,9 @@ float3 GetSkyViewLuminance(Texture2D<float4> lut, SamplerState lutSampler, float
 	// Get ray direction from ndc
 	float4 screenPos = mul(float4(ndc, 1, 1), InvViewProjMtx);
 	screenPos.xyz /= screenPos.w;
+	float3 viewDir = normalize(screenPos.xyz - CameraPos);
 
 	// Get sky color from LUT
-	float3 viewDir = normalize(screenPos.xyz - CameraPos);
 	float3 skyLuminance = GetSkyViewLuminance(SkyViewLUT, LinearSampler, viewDir);
 
 	// Get sun disk parameters & calculate sun luminance
