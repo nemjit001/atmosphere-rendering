@@ -6,10 +6,10 @@ An atmospheric scattering implementation based on a paper with the the same name
 
 This Gigi render technique implements the entire pipeline described in "A Scalable and Production Ready Sky and Atmosphere Rendering Technique":
 - Precomputed atmospheric transmittance based on "Precomputed Atmospheric Scattering" by Bruneton and Neyret.
-- Multiple Scattering LUT
-- Sky View LUT
-- Aerial Perspective LUT
-- ACES filmic tonemapper
+- Precomputed multiple scattering LUT for atmosphere.
+- Sky view LUT from surface.
+- Aerial perspective LUT for camera frustum, without visibility term.
+- ACES filmic tonemapping of output color target.
 
 The Gigi technique exposes the Aerial Perspective LUT and color target containing the rendered sky.
 These can be used by other techniques to shade geometry using atmospheric scattering.
