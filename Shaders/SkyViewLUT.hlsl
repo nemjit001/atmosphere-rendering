@@ -98,5 +98,6 @@ Shader Resources:
 	Texture TransmittanceLUT (as SRV)
 	Texture MultiscatterLUT (as SRV)
 	Texture SkyViewLUT (as UAV)
-	Sampler LinearSampler (as SamplerState)
+Shader Samplers:
+	LinearSampler filter: MinMagMipLinear addressmode: Clamp
 */

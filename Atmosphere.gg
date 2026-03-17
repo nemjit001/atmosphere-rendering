@@ -23,6 +23,12 @@
             "transient": true
         },
         {
+            "name": "AerialPerspectiveLUTResolution",
+            "type": "Float3",
+            "dflt": "32, 32, 32",
+            "transient": true
+        },
+        {
             "name": "SkyViewLUTResolution",
             "type": "Float2",
             "dflt": "200, 100",
@@ -280,6 +286,36 @@
             ]
         },
         {
+            "name": "AerialPerspectiveLUT",
+            "fileName": "Shaders\\AerialPerspectiveLUT.hlsl",
+            "resources": [
+                {
+                    "name": "TransmittanceLUT",
+                    "access": "SRV",
+                    "type": "Texture"
+                },
+                {
+                    "name": "MultiscatterLUT",
+                    "access": "SRV",
+                    "type": "Texture"
+                },
+                {
+                    "name": "AerialPerspectiveLUT",
+                    "access": "UAV",
+                    "type": "Texture",
+                    "texture": {
+                        "dimension": "Texture3D"
+                    }
+                }
+            ],
+            "samplers": [
+                {
+                    "name": "LinearSampler",
+                    "addressMode": "Clamp"
+                }
+            ]
+        },
+        {
             "name": "SkyViewLUT",
             "fileName": "Shaders\\SkyViewLUT.hlsl",
             "resources": [
@@ -415,7 +451,7 @@
                     },
                     {
                         "srcPin": "SkyViewLUT",
-                        "dstNode": "Sky View LUT",
+                        "dstNode": "SkyViewLUT",
                         "dstPin": "resource"
                     }
                 ],
@@ -424,14 +460,14 @@
                 },
                 "dispatchSize": {
                     "node": {
-                        "name": "Sky View LUT"
+                        "name": "SkyViewLUT"
                     }
                 }
             }
         },
         {
             "resourceTexture": {
-                "name": "Sky View LUT",
+                "name": "SkyViewLUT",
                 "editorPos": [
                     504.0,
                     66.0
@@ -492,6 +528,7 @@
                     731.0,
                     66.0
                 ],
+                "visibility": "Exported",
                 "format": {
                     "format": "RGBA32_Float"
                 },
@@ -575,6 +612,64 @@
                 "dispatchSize": {
                     "node": {
                         "name": "ColorTarget"
+                    }
+                }
+            }
+        },
+        {
+            "resourceTexture": {
+                "name": "AerialPerspectiveLUT",
+                "editorPos": [
+                    729.0,
+                    194.0
+                ],
+                "visibility": "Exported",
+                "format": {
+                    "format": "RGBA32_Float"
+                },
+                "size": {
+                    "variable": {
+                        "name": "AerialPerspectiveLUTResolution"
+                    }
+                },
+                "dimension": "Texture3D"
+            }
+        },
+        {
+            "actionComputeShader": {
+                "name": "Generate Aerial Perspective LUT",
+                "editorPos": [
+                    926.0,
+                    130.0
+                ],
+                "linkProperties": [
+                    {},
+                    {},
+                    {}
+                ],
+                "connections": [
+                    {
+                        "srcPin": "TransmittanceLUT",
+                        "dstNode": "Generate Multiple Scattering LUT",
+                        "dstPin": "TransmittanceLUT"
+                    },
+                    {
+                        "srcPin": "MultiscatterLUT",
+                        "dstNode": "Generate Multiple Scattering LUT",
+                        "dstPin": "MultiscatterLUT"
+                    },
+                    {
+                        "srcPin": "AerialPerspectiveLUT",
+                        "dstNode": "AerialPerspectiveLUT",
+                        "dstPin": "resource"
+                    }
+                ],
+                "shader": {
+                    "name": "AerialPerspectiveLUT"
+                },
+                "dispatchSize": {
+                    "node": {
+                        "name": "AerialPerspectiveLUT"
                     }
                 }
             }

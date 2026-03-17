@@ -137,5 +137,6 @@ float3 GetMultiscatterValues(float3 pos, float3 dir, out float3 multiscatterFact
 Shader Resources:
 	Texture TransmittanceLUT (as SRV)
 	Texture MultiscatterLUT (as UAV)
-	Sampler LinearSampler (as SamplerState)
+Shader Samplers:
+	LinearSampler filter: MinMagMipLinear addressmode: Clamp
 */
