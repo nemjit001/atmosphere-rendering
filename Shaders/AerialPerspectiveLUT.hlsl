@@ -22,7 +22,7 @@ static float3 OzoneAbsorptionBase = /*$(Variable:OzoneAbsorptionBase)*/;
 
 static const float AerialPerspectiveDepth = /*$(Variable:AerialPerspectiveDepth)*/;
 
-float4 GetAerialPerspective(float3 pos, float3 dir)
+float4 GetAerialPerspective(float3 pos, float3 dir, float traceDist)
 {
 	// Calculate sun direction
 	float3 lightDir = GetSunDirection(SunDirection);
@@ -34,7 +34,8 @@ float4 GetAerialPerspective(float3 pos, float3 dir)
 	}
 
 	// Raymarch aerial perspective
-	float dt = atmoDist / RAYMARCH_STEPS;
+	traceDist = min(atmoDist, traceDist);
+	float dt = traceDist / RAYMARCH_STEPS;
 	float3 transmittance = float3(1, 1, 1);
 	float3 luminance = float3(0, 0, 0);
 	for (uint i = 0; i < RAYMARCH_STEPS; i++)
@@ -93,11 +94,11 @@ float4 GetAerialPerspective(float3 pos, float3 dir)
 
 	// Calculate froxel world-space position in megameters based on camera position
 	float froxelDist = uvw.z * AerialPerspectiveDepth * 1000.0; // Froxel distance from camera in meters
-	float3 froxelPos = CameraPos + froxelDist * viewDir; // Froxel position in meters
-	froxelPos = float3(0, PlanetRadius.x, 0) + froxelPos * 1e-6; // Froxel position in megameters on planet surface
+	float3 viewPos = float3(0, PlanetRadius.x, 0) + CameraPos * 1e-6;
+	float3 froxelPos = viewPos + 1e-6 * froxelDist * viewDir; // Froxel position in megameters
 
 	// Get aerial perspective LUT value based on froxel position and view direction
-	AerialPerspectiveLUT[froxelIdx] = GetAerialPerspective(froxelPos, viewDir);
+	AerialPerspectiveLUT[froxelIdx] = GetAerialPerspective(viewPos, viewDir, 1e-6 * froxelDist);
 }
 
 /*

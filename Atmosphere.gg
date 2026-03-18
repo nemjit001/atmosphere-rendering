@@ -224,41 +224,6 @@
             "transient": true
         },
         {
-            "name": "ViewMtx",
-            "type": "Float4x4",
-            "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
-            "visibility": "Host",
-            "transient": true
-        },
-        {
-            "name": "ProjMtx",
-            "type": "Float4x4",
-            "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
-            "visibility": "Host",
-            "transient": true
-        },
-        {
-            "name": "ViewProjMtx",
-            "type": "Float4x4",
-            "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
-            "visibility": "Host",
-            "transient": true
-        },
-        {
-            "name": "InvViewMtx",
-            "type": "Float4x4",
-            "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
-            "visibility": "Host",
-            "transient": true
-        },
-        {
-            "name": "InvProjMtx",
-            "type": "Float4x4",
-            "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
-            "visibility": "Host",
-            "transient": true
-        },
-        {
             "name": "InvViewProjMtx",
             "type": "Float4x4",
             "dflt": "1.0f, 0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f",
