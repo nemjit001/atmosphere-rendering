@@ -24,6 +24,12 @@ earth-scale planets due to floating-point precision breaking down.
 To get planet-scale atmosphere rendering, the planet surface
 and atmosphere radii need to be reduced.
 
+## Rendering with the Aerial Perspective LUT
+
+![Example Render of the Stanford Bunny with Aerial Perspective applied](./BunnySample.png)
+
+The Aerial Perspective LUT can be sampled on a per-vertex basis for objects, or during the lighting pass when rendering using a deferred renderer. Since visibility is not used in the LUT some artifacts remain. Nevertheless, the result looks awesome :)
+
 ## License
 
 This is an open-source implementation of the original paper under the MIT license. This implementation does not use any code of the original work.
