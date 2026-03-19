@@ -374,6 +374,7 @@
                     -69.0,
                     -30.0
                 ],
+                "visibility": "Exported",
                 "format": {
                     "format": "RGBA32_Float"
                 },
