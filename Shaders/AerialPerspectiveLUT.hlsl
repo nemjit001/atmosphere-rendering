@@ -6,7 +6,8 @@
 #define RAYMARCH_STEPS 30 // Taken from source paper
 
 static const float3 CameraPos = /*$(Variable:CameraPos)*/;
-static float4x4 InvViewProjMtx = /*$(Variable:InvViewProjMtx)*/;
+static float4x4 InvProjMtx = /*$(Variable:InvProjMtx)*/;
+static float4x4 InvViewMtx = /*$(Variable:InvViewMtx)*/;
 
 static float2 SunDirection = /*$(Variable:SunDirection)*/;
 static float3 SunColor = /*$(Variable:SunColor)*/;
@@ -88,9 +89,10 @@ float4 GetAerialPerspective(float3 pos, float3 dir, float traceDist)
 
 	// Get ray direction from ndc
 	// This uses froxel w coordinate for shooting ray through the actual center of the froxel instead of through the far plane.
-	float4 screenPos = mul(float4(ndc, uvw.z, 1), InvViewProjMtx);
+	float4 screenPos = mul(float4(ndc, uvw.z, 1), InvProjMtx);
 	screenPos.xyz /= screenPos.w;
-	float3 viewDir = normalize(screenPos.xyz - CameraPos);
+	float3 viewDir = normalize(screenPos.xyz);
+	viewDir = normalize(mul(float4(viewDir, 0), InvViewMtx).xyz);
 
 	// Calculate froxel world-space position in megameters based on camera position
 	float froxelDist = uvw.z * AerialPerspectiveDepth * 1000.0; // Froxel distance from camera in meters

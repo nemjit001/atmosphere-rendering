@@ -4,7 +4,8 @@
 /*$(Embed:Common.hlsl)*/
 
 static float3 CameraPos = /*$(Variable:CameraPos)*/;
-static float4x4 InvViewProjMtx = /*$(Variable:InvViewProjMtx)*/;
+static float4x4 InvProjMtx = /*$(Variable:InvProjMtx)*/;
+static float4x4 InvViewMtx = /*$(Variable:InvViewMtx)*/;
 
 static float2 SunDirection = /*$(Variable:SunDirection)*/;
 static float3 SunColor = /*$(Variable:SunColor)*/;
@@ -40,9 +41,10 @@ float3 GetSkyViewLuminance(Texture2D<float4> lut, SamplerState lutSampler, float
 	ndc.y *= -1.0; // Flip because of DX12's texture convenetion
 
 	// Get ray direction from ndc
-	float4 screenPos = mul(float4(ndc, 1, 1), InvViewProjMtx);
+	float4 screenPos = mul(float4(ndc, 1, 1), InvProjMtx);
 	screenPos.xyz /= screenPos.w;
-	float3 viewDir = normalize(screenPos.xyz - CameraPos);
+	float3 viewDir = normalize(screenPos.xyz);
+	viewDir = normalize(mul(float4(viewDir, 0), InvViewMtx).xyz);
 
 	// Get sky color from LUT
 	float3 skyLuminance = GetSkyViewLuminance(SkyViewLUT, LinearSampler, viewDir);
