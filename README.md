@@ -16,14 +16,6 @@ These can be used by other techniques to shade geometry using atmospheric scatte
 
 A tonemapped version of the color target is also provided to preview the skybox output.
 
-IMPORTANT:
-
-This implementation does not support aerial views of
-earth-scale planets due to floating-point precision breaking down.
-
-To get planet-scale atmosphere rendering, the planet surface
-and atmosphere radii need to be reduced.
-
 ## Rendering with the Aerial Perspective LUT
 
 ![Example Render of the Stanford Bunny with Aerial Perspective applied](./BunnySample.png)
