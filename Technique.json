@@ -1,0 +1,11 @@
+{
+    "Title": "Production Ready Atmosphere Rendering",
+    "Description": "An atmospheric scattering model implementation. An open source implementation based on the paper \"Production Ready Atmosphere Rendering\".",
+    "Author": "nemjit001",
+    "Tags": "atmosphere,skybox,compute",
+    "Technique": "Atmosphere.gg",
+    "Website": "https://github.com/nemjit001/atmosphere-rendering.git",
+    "Screenshot": "Render.png",
+    "License": "LICENSE",
+    "GigiVersion": "1.1.9"
+}
