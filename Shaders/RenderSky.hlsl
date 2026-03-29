@@ -20,7 +20,7 @@ float3 GetSkyViewLuminance(Texture2D<float4> lut, SamplerState lutSampler, float
 	lut.GetDimensions(lutDims.x, lutDims.y);
 
 	// Calculate uv coords
-	float theta = safeacos(-dir.y) - (0.5 * PI);
+	float theta = safeacos(dir.y) - (0.5 * PI);
 	float u = 0.5 + (atan2(dir.x, dir.z) / TWO_PI);
 	float v = 0.5 + 0.5 * sign(theta) * sqrt(abs(theta) / (0.5 * PI));
 

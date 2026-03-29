@@ -25,6 +25,11 @@ float3 GetSkyView(float3 pos, float3 dir)
 	// Calculate sun direction
 	float3 lightDir = GetSunDirection(SunDirection);
 
+	// Early out on surface intersection
+	if (IntersectPlanet(pos, dir, PlanetRadius.x) >= 0.0) {
+		return float3(0, 0, 0);
+	}
+
 	// Intersect atmosphere
 	float atmoDist = IntersectPlanet(pos, dir, PlanetRadius.y);
 	if (atmoDist < 0.0) {
@@ -80,7 +85,7 @@ float3 GetSkyView(float3 pos, float3 dir)
 	// Theta based on nonlinear mapping of v, ranged in [0, PI] using a quadratic curve centered around 1/2 PI.
 	float v = 2.0 * uv.y - 1.0;
 	v = sign(v) * (v * v);
-	float theta = -v * (0.5 * PI);
+	float theta = v * (0.5 * PI);
 	theta += (0.5 * PI);
 
 	// Phi ranged in [-PI, PI]
